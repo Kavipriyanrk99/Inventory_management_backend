@@ -20,6 +20,8 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({extended : false}));
 app.use(express.json());
 
+app.use('/products', require('./routes/API/product'));
+
 app.all('*', (req, res)=>{
     res.status(404).json({
         'message' : 'request not found'
