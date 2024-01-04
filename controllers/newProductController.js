@@ -44,22 +44,6 @@ const createNewProduct = async(req, res) => {
     }
 };
 
-/* const updateEmployee = async(req, res) => {
-    try{
-        const employee = await Employees.findOne({ id: parseInt(req.body.id) }).exec();
-
-        if (!employee) {
-            return res.status(204).json({ "message": `Employee ID ${req.body.id} not found` });
-        }
-        if (req.body.firstname) await Employees.updateOne({ id: parseInt(req.body.id) }, {firstname: req.body.firstname});
-        if (req.body.lastname) await Employees.updateOne({ id: parseInt(req.body.id) }, {lastname: req.body.lastname});
-        res.status(201).json({ 'message': `Employee ${req.body.id} updated!` });
-    }catch(err){
-        console.log(err);
-    }
-    
-} */
-
 const updateProduct = async(req, res) => {
     try{
         const product = await Products.findOne({ productID : req.body.productID}).exec();
