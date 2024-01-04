@@ -9,6 +9,15 @@ const generateProductID = async() => {
     return newID;
 };
 
+const generateTransactionID = async() => {
+    const lstTransaction = await TransactionHistory.find().sort({transactionID: -1}).limit(1);
+    const count = (lstTransaction.length > 0) ? parseInt(lstTransaction[0].transactionID.split("-")[2]) + 1 : 1;
+    const year = date_fns.format(new Date(), 'yyyy');
+    const newID = (count < 10) ? `TRANS-${year}-000${count}` : ((count < 100) ? `TRANS-${year}-00${count}` : ((count < 1000) ? `TRANS-${year}-0${count}` : `TRANS-${year}-${count}`));
+
+    return newID;
+}
+
 /* REQUEST HANDLING METHODS */
 
 const getAllProducts = async(req, res) => {
@@ -27,18 +36,30 @@ const createNewProduct = async(req, res) => {
         return res.status(400).json({ 'message': 'product name, unit price, initial quantity and description are required!'});
 
     try{
+        const productID = await generateProductID();
+        const dateNow = date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss');
+
         const product = new Products({
-            productID : await generateProductID(),
+            productID : productID,
             productName : req.body.productName,
             unitPrice : parseFloat(req.body.unitPrice),
             quantityInStock : parseInt(req.body.initialQuantity),
             barcode : (req.body.barcode) ? req.body.barcode : '',
             description : req.body.description,
-            date : date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss')
+            date : dateNow
         });
         product.save();
-    
-        res.status(201).json({ 'message': `New Product created!` });
+
+        const transaction = new TransactionHistory({
+            transactionID : await generateTransactionID(),
+            productID : productID,
+            transactionType : "CREATED",
+            quantity : parseInt(req.body.initialQuantity),
+            transactionDate : dateNow
+        });
+        transaction.save();
+
+        res.status(201).json({ 'message': `New Product created!`});
     } catch(error){
         console.log(error);
     }
