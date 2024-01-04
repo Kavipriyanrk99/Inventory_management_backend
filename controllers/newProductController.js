@@ -75,13 +75,22 @@ const updateProduct = async(req, res) => {
 
         if (req.body.productName) product.productName = req.body.productName;
         if (req.body.unitPrice) product.unitPrice = parseFloat(req.body.unitPrice);
-        if (req.body.initialQuantity) product.quantityInStock = parseFloat(req.body.initialQuantity);
+        if (req.body.initialQuantity) product.quantityInStock = parseInt(req.body.initialQuantity);
         if (req.body.barcode) product.barcode = req.body.barcode;
         if (req.body.description) product.description = req.body.description;
         product.date = date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss');
 
         await product.save();
         
+        const transaction = new TransactionHistory({
+            transactionID : await generateTransactionID(),
+            productID : product.productID,
+            transactionType : "UPDATED",
+            quantity : parseInt(product.quantityInStock),
+            transactionDate : product.date
+        });
+        transaction.save();
+
         res.status(201).json({ 'message': `product id ${req.body.productID} updated!`});
     } catch(error){
         console.log(error);
@@ -95,6 +104,15 @@ const deleteProduct = async(req, res) => {
         if(!product){
             return res.status(404).json({ 'message': `product id ${req.body.productID} not found!` });
         }
+
+        const transaction = new TransactionHistory({
+            transactionID : await generateTransactionID(),
+            productID : product.productID,
+            transactionType : "DELETED",
+            quantity : parseInt(product.quantityInStock),
+            transactionDate : date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss')
+        });
+        transaction.save();
         
         await Products.deleteOne({ productID : req.body.productID});
         res.status(201).json({ 'message': `product id ${req.body.productID} deleted!`});
