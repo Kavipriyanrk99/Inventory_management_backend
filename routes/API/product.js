@@ -1,14 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const productController = require('../../controllers/productController');
+const newProductController = require('../../controllers/newProductController');
+const inboundController = require('../../controllers/inboundController');
+const outboundController = require('../../controllers/outboundController');
 
 router.route('/')
-    .get(productController.getAllProducts)
-    .post(productController.createNewProduct)
-    .patch(productController.updateProduct)
-    .delete(productController.deleteProduct);
+    .get(newProductController.getAllProducts);
+
+router.route('/newproduct')
+    .post(newProductController.createNewProduct)
+    .patch(newProductController.updateProduct)
+    .delete(newProductController.deleteProduct);
 
 router.route('/:productID')
-    .get(productController.getProduct);
+    .get(newProductController.getProduct);
+
+router.route('/inbound')
+    .patch(inboundController.updateInbound);
+
+router.route('/outbound')
+    .patch(outboundController.updateOutbound);
 
 module.exports = router;
