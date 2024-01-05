@@ -6,6 +6,9 @@ const generateID = require('./utils/generateID');
 const updateInbound = async(req, res) => {
     if(!req.body.date || !req.body.productID || !req.body.quantityReceived || !req.body.description) return res.status(400).json({ 'message': 'product id, quantity received, date and description are required!'});
 
+    if(req.body.quantityReceived <= 0)
+        return res.status(400).json({ 'message': 'invlaid quantity received!'});
+
     try{
         const product = await Products.findOne({ productID : req.body.productID}).exec();
         const date = date_fns.format(new Date(req.body.date), 'yyyy/MM/dd\tHH:mm:ss');
