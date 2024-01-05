@@ -13,6 +13,9 @@ const updateOutbound = async(req, res) => {
             return res.status(404).json({ 'message': `product id ${req.body.productID} not found!` });
         }
 
+        if(parseInt(req.body.quantitySold) <= 0 || parseInt(req.body.quantitySold) > product.quantityInStock)
+            return res.status(400).json({ 'message': 'invalid quantity sold!'});
+
         product.quantityInStock -= parseInt(req.body.quantitySold);
         await product.save();
 
