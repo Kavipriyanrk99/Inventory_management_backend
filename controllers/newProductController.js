@@ -1,22 +1,8 @@
 const date_fns = require('date-fns');
 const Products = require('../model/Product');
 const {TransactionHistory, InboundTransaction, OutboundTransaction} = require('../model/Transaction'); 
+const generateID = require('../controllers/utils/generateID');
 
-const generateProductID = async() => {
-    const lstProduct = await Products.find().sort({productID: -1}).limit(1);
-    const count = (lstProduct.length > 0) ? parseInt(lstProduct[0].productID.split("-")[1]) + 1 : 1;
-    const newID = (count < 10) ? `PRD-000${count}` : ((count < 100) ? `PRD-00${count}` : ((count < 1000) ? `PRD-0${count}` : `PRD-${count}`));
-    return newID;
-};
-
-const generateTransactionID = async() => {
-    const lstTransaction = await TransactionHistory.find().sort({transactionID: -1}).limit(1);
-    const count = (lstTransaction.length > 0) ? parseInt(lstTransaction[0].transactionID.split("-")[2]) + 1 : 1;
-    const year = date_fns.format(new Date(), 'yyyy');
-    const newID = (count < 10) ? `TRANS-${year}-000${count}` : ((count < 100) ? `TRANS-${year}-00${count}` : ((count < 1000) ? `TRANS-${year}-0${count}` : `TRANS-${year}-${count}`));
-
-    return newID;
-}
 
 /* REQUEST HANDLING METHODS */
 
@@ -36,7 +22,7 @@ const createNewProduct = async(req, res) => {
         return res.status(400).json({ 'message': 'product name, unit price, initial quantity and description are required!'});
 
     try{
-        const productID = await generateProductID();
+        const productID = await generateID.generateProductID();
         const dateNow = date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss');
 
         const product = new Products({
@@ -51,7 +37,7 @@ const createNewProduct = async(req, res) => {
         product.save();
 
         const transaction = new TransactionHistory({
-            transactionID : await generateTransactionID(),
+            transactionID : await generateID.generateTransactionHistID(),
             productID : productID,
             transactionType : "CREATED",
             quantity : parseInt(req.body.initialQuantity),
@@ -83,7 +69,7 @@ const updateProduct = async(req, res) => {
         await product.save();
         
         const transaction = new TransactionHistory({
-            transactionID : await generateTransactionID(),
+            transactionID : await generateID.generateTransactionHistID(),
             productID : product.productID,
             transactionType : "UPDATED",
             quantity : parseInt(product.quantityInStock),
@@ -106,7 +92,7 @@ const deleteProduct = async(req, res) => {
         }
 
         const transaction = new TransactionHistory({
-            transactionID : await generateTransactionID(),
+            transactionID : await generateID.generateTransactionHistID(),
             productID : product.productID,
             transactionType : "DELETED",
             quantity : parseInt(product.quantityInStock),
