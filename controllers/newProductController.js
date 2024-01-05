@@ -21,17 +21,20 @@ const createNewProduct = async(req, res) => {
     if(!req.body.productName || !req.body.unitPrice || !req.body.initialQuantity || !req.body.description)
         return res.status(400).json({ 'message': 'product name, unit price, initial quantity and description are required!'});
 
+    if(req.body.unitPrice <= 0 || req.body.initialQuantity < 0)
+        return res.status(400).json({ 'message': 'invalid unit price or initial quantity!'});
+
     try{
         const productID = await generateID.generateProductID();
         const dateNow = date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss');
 
         const product = new Products({
             productID : productID,
-            productName : req.body.productName,
+            productName : req.body.productName.trim(),
             unitPrice : parseFloat(req.body.unitPrice),
             quantityInStock : parseInt(req.body.initialQuantity),
-            barcode : (req.body.barcode) ? req.body.barcode : '',
-            description : req.body.description,
+            barcode : (req.body.barcode) ? req.body.barcode.trim() : '',
+            description : req.body.description.trim(),
             date : dateNow
         });
         product.save();
@@ -59,11 +62,21 @@ const updateProduct = async(req, res) => {
             return res.status(404).json({ 'message': `product id ${req.body.productID} not found!` });
         }
 
-        if (req.body.productName) product.productName = req.body.productName;
-        if (req.body.unitPrice) product.unitPrice = parseFloat(req.body.unitPrice);
-        if (req.body.initialQuantity) product.quantityInStock = parseInt(req.body.initialQuantity);
-        if (req.body.barcode) product.barcode = req.body.barcode;
-        if (req.body.description) product.description = req.body.description;
+        if (req.body.productName) product.productName = req.body.productName.trim();
+        if (req.body.unitPrice){
+            if(req.body.unitPrice > 0)
+                product.unitPrice = parseFloat(req.body.unitPrice);
+            else
+                return res.status(400).json({ 'message': 'invalid unit price!'});
+        } 
+        if (req.body.initialQuantity){
+            if(req.body.initialQuantity >= 0)
+                product.quantityInStock = parseInt(req.body.initialQuantity);
+            else
+                return res.status(400).json({ 'message': 'invalid initial quantity!'});
+        }
+        if (req.body.barcode) product.barcode = req.body.barcode.trim();
+        if (req.body.description) product.description = req.body.description.trim();
         product.date = date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss');
 
         await product.save();
