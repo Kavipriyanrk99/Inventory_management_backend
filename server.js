@@ -22,6 +22,8 @@ app.use(express.json());
 
 app.use('/products', require('./routes/API/product'));
 
+app.use('/transactions', require('./routes/API/transaction'));
+
 app.all('*', (req, res)=>{
     res.status(404).json({
         'message' : 'request not found'
