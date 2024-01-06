@@ -25,7 +25,8 @@ const updateOutbound = async(req, res) => {
             productID : product.productID,
             transactionType : "OUT",
             quantity : parseInt(req.body.quantitySold),
-            transactionDate : date
+            transactionDate : date,
+            description : req.body.description.trim()
         });
         transaction.save();
 
@@ -34,7 +35,8 @@ const updateOutbound = async(req, res) => {
             transactionHistID : transactionHistID,
             productID : product.productID,
             quantitySold : parseInt(req.body.quantitySold),
-            transactionDate : date
+            transactionDate : date,
+            description : req.body.description.trim()
         });
 
         outboundTransaction.save();

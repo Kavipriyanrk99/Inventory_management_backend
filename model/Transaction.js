@@ -21,6 +21,10 @@ const transactionHistorySchema = new Schema({
     transactionDate : {
         type : Date,
         required : true
+    },
+    description : {
+        type : String,
+        required : true
     }
 });
 
@@ -44,6 +48,10 @@ const inboundTransactionSchema = new Schema({
     transactionDate : {
         type : Date,
         required : true
+    },
+    description : {
+        type : String,
+        required : true
     }
 });
 
@@ -66,6 +74,10 @@ const outboundTransactionSchema = new Schema({
     },
     transactionDate : {
         type : Date,
+        required : true
+    },
+    description : {
+        type : String,
         required : true
     }
 });

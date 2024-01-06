@@ -44,7 +44,8 @@ const createNewProduct = async(req, res) => {
             productID : productID,
             transactionType : "CREATED",
             quantity : 0,
-            transactionDate : dateNow
+            transactionDate : dateNow,
+            description: req.body.description.trim()
         });
         transaction.save();
 
@@ -80,7 +81,8 @@ const updateProduct = async(req, res) => {
             productID : product.productID,
             transactionType : "UPDATED",
             quantity : parseInt(product.quantityInStock),
-            transactionDate : product.date
+            transactionDate : product.date,
+            description: product.description
         });
         transaction.save();
 
@@ -103,7 +105,8 @@ const deleteProduct = async(req, res) => {
             productID : product.productID,
             transactionType : "DELETED",
             quantity : parseInt(product.quantityInStock),
-            transactionDate : date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss')
+            transactionDate : date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss'),
+            description : product.description
         });
         transaction.save();
         
