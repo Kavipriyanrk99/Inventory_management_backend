@@ -9,6 +9,7 @@ const updateOutbound = async(req, res) => {
     try{
         const product = await Products.findOne({ productID : req.body.productID}).exec();
         const date = date_fns.format(new Date(req.body.date), 'yyyy/MM/dd\tHH:mm:ss');
+        const transactionHistID = await generateID.generateTransactionHistID();
         if(!product){
             return res.status(404).json({ 'message': `product id ${req.body.productID} not found!` });
         }
@@ -20,7 +21,7 @@ const updateOutbound = async(req, res) => {
         await product.save();
 
         const transaction = new TransactionHistory({
-            transactionID : await generateID.generateTransactionHistID(),
+            transactionID : transactionHistID,
             productID : product.productID,
             transactionType : "OUT",
             quantity : parseInt(req.body.quantitySold),
@@ -30,6 +31,7 @@ const updateOutbound = async(req, res) => {
 
         const outboundTransaction = new OutboundTransaction({
             transactionID : await generateID.generateOutboundTransactionID(),
+            transactionHistID : transactionHistID,
             productID : product.productID,
             quantitySold : parseInt(req.body.quantitySold),
             transactionDate : date

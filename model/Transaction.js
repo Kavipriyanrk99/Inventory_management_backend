@@ -29,6 +29,10 @@ const inboundTransactionSchema = new Schema({
         type : String,
         required : true
     },
+    transactionHistID : {
+        type : String,
+        required : true
+    },
     productID : {
         type : String,
         required : true
@@ -45,6 +49,10 @@ const inboundTransactionSchema = new Schema({
 
 const outboundTransactionSchema = new Schema({
     transactionID : {
+        type : String,
+        required : true
+    },
+    transactionHistID : {
         type : String,
         required : true
     },
