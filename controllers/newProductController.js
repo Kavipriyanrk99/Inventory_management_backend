@@ -100,15 +100,9 @@ const deleteProduct = async(req, res) => {
             return res.status(404).json({ 'message': `product id ${req.body.productID} not found!` });
         }
 
-        const transaction = new TransactionHistory({
-            transactionID : await generateID.generateTransactionHistID(),
-            productID : product.productID,
-            transactionType : "DELETED",
-            quantity : parseInt(product.quantityInStock),
-            transactionDate : date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss'),
-            description : product.description
-        });
-        transaction.save();
+        await TransactionHistory.deleteMany({ productID : req.body.productID});
+        await InboundTransaction.deleteMany({ productID : req.body.productID});
+        await OutboundTransaction.deleteMany({ productID : req.body.productID});
         
         await Products.deleteOne({ productID : req.body.productID});
         res.status(201).json({ 'message': `product id ${req.body.productID} deleted!`});
