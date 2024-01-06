@@ -8,7 +8,37 @@ const generateID = require('../controllers/utils/generateID');
 
 const getAllProducts = async(req, res) => {
     try{
-        const products = await Products.find().exec();
+        const products = await Products.aggregate([
+            {
+              $lookup: {
+                from: 'inboundtransactions',
+                localField: 'productID',
+                foreignField: 'productID',
+                as: 'inbound'
+              }
+            },
+            {
+              $lookup: {
+                from: 'outboundtransactions',
+                localField: 'productID',
+                foreignField: 'productID',
+                as: 'outbound'
+              }
+            },
+            {
+              $project: {
+                productID: 1,
+                productName: 1,
+                unitPrice: 1,
+                totalInbound: { $sum: '$inbound.quantityReceived' },
+                totalOutbound: { $sum: '$outbound.quantitySold' },
+                quantityInStock: 1,
+                barcode: 1,
+                description: 1,
+                date: 1
+              }
+            }
+          ]).exec();
         if(products.length <= 0) return res.status(404).json({'message' : 'No Products found!'});
         res.status(200).json(products);
     } catch(error){
