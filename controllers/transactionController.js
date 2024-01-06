@@ -101,8 +101,29 @@ const getOutboundTransactions = async(req, res) => {
     }
 }
 
+const delTransactionHist = async(req, res) => {
+    try{
+        const transaction = await TransactionHistory.findOne({ transactionID : req.body.transactionID}).exec();
+        if(!transaction){
+            return res.status(404).json({ 'message': `transaction id ${req.body.transactionID} not found!` });
+        }
+
+        if(transaction.transactionType === 'IN')
+            await InboundTransaction.deleteOne({ transactionHistID : req.body.transactionID});
+
+        if(transaction.transactionType === 'OUT')
+            await OutboundTransaction.deleteOne({ transactionHistID : req.body.transactionID});
+
+        await TransactionHistory.deleteOne({ transactionID : req.body.transactionID});
+        res.status(201).json({ 'message': `transaction id ${req.body.transactionID} deleted!`});
+    } catch(error){
+        console.log(error);
+    }
+}
+
 module.exports = {
     getAllTransactions,
     getInboundTransactions,
-    getOutboundTransactions
+    getOutboundTransactions,
+    delTransactionHist
 };
