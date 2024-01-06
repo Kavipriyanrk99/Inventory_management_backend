@@ -18,11 +18,11 @@ const getAllProducts = async(req, res) => {
 
 const createNewProduct = async(req, res) => {
 
-    if(!req.body.productName || !req.body.unitPrice || !req.body.initialQuantity || !req.body.description)
+    if(!req.body.productName || !req.body.unitPrice || !req.body.description)
         return res.status(400).json({ 'message': 'product name, unit price, initial quantity and description are required!'});
 
-    if(req.body.unitPrice <= 0 || req.body.initialQuantity < 0)
-        return res.status(400).json({ 'message': 'invalid unit price or initial quantity!'});
+    if(req.body.unitPrice <= 0)
+        return res.status(400).json({ 'message': 'invalid unit price!'});
 
     try{
         const productID = await generateID.generateProductID();
@@ -32,7 +32,7 @@ const createNewProduct = async(req, res) => {
             productID : productID,
             productName : req.body.productName.trim(),
             unitPrice : parseFloat(req.body.unitPrice),
-            quantityInStock : parseInt(req.body.initialQuantity),
+            quantityInStock : 0,
             barcode : (req.body.barcode) ? req.body.barcode.trim() : '',
             description : req.body.description.trim(),
             date : dateNow
@@ -43,7 +43,7 @@ const createNewProduct = async(req, res) => {
             transactionID : await generateID.generateTransactionHistID(),
             productID : productID,
             transactionType : "CREATED",
-            quantity : parseInt(req.body.initialQuantity),
+            quantity : 0,
             transactionDate : dateNow
         });
         transaction.save();
@@ -69,12 +69,6 @@ const updateProduct = async(req, res) => {
             else
                 return res.status(400).json({ 'message': 'invalid unit price!'});
         } 
-        if (req.body.initialQuantity){
-            if(req.body.initialQuantity >= 0)
-                product.quantityInStock = parseInt(req.body.initialQuantity);
-            else
-                return res.status(400).json({ 'message': 'invalid initial quantity!'});
-        }
         if (req.body.barcode) product.barcode = req.body.barcode.trim();
         if (req.body.description) product.description = req.body.description.trim();
         product.date = date_fns.format(new Date(), 'yyyy/MM/dd\tHH:mm:ss');
