@@ -124,18 +124,18 @@ const updateProduct = async(req, res) => {
 
 const deleteProduct = async(req, res) => {
     try{
-        const product = await Products.findOne({ productID : req.body.productID}).exec();
+        const product = await Products.findOne({ productID : req.params.productID}).exec();
 
         if(!product){
-            return res.status(404).json({ 'message': `product id ${req.body.productID} not found!` });
+            return res.status(404).json({ 'message': `product id ${req.params.productID} not found!` });
         }
 
-        await TransactionHistory.deleteMany({ productID : req.body.productID});
-        await InboundTransaction.deleteMany({ productID : req.body.productID});
-        await OutboundTransaction.deleteMany({ productID : req.body.productID});
+        await TransactionHistory.deleteMany({ productID : req.params.productID});
+        await InboundTransaction.deleteMany({ productID : req.params.productID});
+        await OutboundTransaction.deleteMany({ productID : req.params.productID});
         
-        await Products.deleteOne({ productID : req.body.productID});
-        res.status(201).json({ 'message': `product id ${req.body.productID} deleted!`});
+        await Products.deleteOne({ productID : req.params.productID});
+        res.status(201).json({ 'message': `product id ${req.params.productID} deleted!`});
     }catch(err){
         console.log(err);
     } 

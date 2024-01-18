@@ -10,6 +10,8 @@ router.route('/')
 router.route('/newproduct')
     .post(newProductController.createNewProduct)
     .patch(newProductController.updateProduct)
+
+router.route('/newproduct/:productID')
     .delete(newProductController.deleteProduct);
 
 router.route('/:productID')
