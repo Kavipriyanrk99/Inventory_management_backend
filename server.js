@@ -21,6 +21,7 @@ app.use(express.urlencoded({extended : false}));
 app.use(express.json());
 
 app.use('/register', require('./routes/register'));
+app.use('/auth', require('./routes/auth'));
 
 app.use('/products', require('./routes/API/product'));
 
