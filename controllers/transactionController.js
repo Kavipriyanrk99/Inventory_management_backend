@@ -22,7 +22,9 @@ const getAllTransactions = async(req, res) => {
                 transactionType: 1,
                 quantity: 1,
                 transactionDate: 1,
-                quantityInStock: '$productDetails.quantityInStock'
+                quantityInStock: '$productDetails.quantityInStock',
+                unitPrice: '$productDetails.unitPrice',
+                description: 1
             }
           }
         ]);
