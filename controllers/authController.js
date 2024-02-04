@@ -40,7 +40,7 @@ const handleLogin = async(req, res) => {
 
         res.cookie('jwt', refreshToken, { httpOnly : true, secure : false, sameSite : 'None', maxAge : 24 * 60 * 60 * 1000 });
 
-        res.json({ roles, accessToken });
+        res.json({ roles : roles, accessToken : accessToken });
     } else{
         return res.status(401).json({ 'message': 'unauthorized!'});
     }
