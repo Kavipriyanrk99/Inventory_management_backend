@@ -25,8 +25,4 @@ const userSchema = new Schema({
     refreshToken : String
 });
 
-const Users = mongoose.model('User', userSchema);
-
-module.exports = {
-    Users
-};
+module.exports = mongoose.model('User', userSchema); 

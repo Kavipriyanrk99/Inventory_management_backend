@@ -20,6 +20,8 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({extended : false}));
 app.use(express.json());
 
+app.use('/register', require('./routes/register'));
+
 app.use('/products', require('./routes/API/product'));
 
 app.use('/transactions', require('./routes/API/transaction'));
