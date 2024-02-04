@@ -9,6 +9,7 @@ const { connectDB } = require('./config/dbConn');
 const { logger } = require('./middleware/logEvents');
 const { errHandler } = require('./middleware/errHandler');
 const { corsOptions } = require('./config/corsOptions');
+const { verifyJWT } = require('./middleware/verifyJWT');
 
 const PORT = process.env.PORT || 5000;
 
@@ -27,6 +28,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/refresh', require('./routes/refresh'));
 app.use('/logout', require('./routes/logout'));
 
+app.use(verifyJWT);
 app.use('/products', require('./routes/API/product'));
 
 app.use('/transactions', require('./routes/API/transaction'));
