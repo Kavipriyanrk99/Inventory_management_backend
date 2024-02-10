@@ -12,7 +12,7 @@ const handleLogout = async(req, res) => {
     foundUser.refreshToken = '';
     await foundUser.save();
 
-    res.clearCookie('jwt', { httpOnly : true, sameSite : 'None', secure : false });
+    res.clearCookie('jwt', { httpOnly : true, sameSite : 'None', secure : true });
     return res.status(200).json({ 'message': 'user logged out successfully!'});
 }
 
